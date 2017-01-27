@@ -233,11 +233,7 @@ public class ActualResultHolder {
      * @return primitive array
      */
     private byte[] toPrimitive(Byte[] in){
-        byte[] out = new byte[in.length];
-        for(int i = 0; i < in.length; i++){
-            out[i] = in[i].byteValue();
-        }
-        return out;
+        return SQLHelper.toPrimitive(in);
     }
 
     /**

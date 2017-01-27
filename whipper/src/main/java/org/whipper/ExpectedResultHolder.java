@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.whipper.connection.ConnectionFactory;
 import org.whipper.xml.XmlHelper;
 import org.whipper.xml.result.QueryResultType;
 
@@ -28,17 +30,43 @@ public class ExpectedResultHolder {
     private String exceptionMessage;
     private String exceptionRegex;
     private QueryResultType originalResult;
+    private ConnectionFactory connectionFactory;	
 
     /**
      * Builds holders based on input XML file.
      *
      * @param xmlFilePath XMl file with expected result
+     * @param connectionFactory Connection factory object
      * @throws IOException if some error occurs or in input file is malformed
      */
-    public void buildResult(File xmlFilePath) throws IOException{
+    public void buildResult(File xmlFilePath, ConnectionFactory connectionFactory) throws IOException{
         clear();
+        this.connectionFactory = connectionFactory;
         XmlHelper.loadResult(xmlFilePath, this);
     }
+    
+    /**
+	 * Creates and returns new connection object.
+	 * 
+	 * @return JDBC Connection object
+	 */
+	public Connection getConnection() {
+		try {
+			return connectionFactory.getConnection();
+		} catch (Exception e) {
+			addError(e.getMessage());
+			return null;
+		}
+	}
+
+	/**
+	 * Gets connection factory object
+	 * 
+	 * @return connectionFactory
+	 */
+	public ConnectionFactory getConnectionFactory() {
+		return connectionFactory;
+	}
 
     /**
      * Sets labels.

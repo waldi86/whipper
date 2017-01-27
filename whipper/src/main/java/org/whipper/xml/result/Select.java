@@ -17,6 +17,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
+import org.whipper.xml.suite.Sql;
+
 
 /**
  * <p>Java class for select complex type.
@@ -28,6 +30,14 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="sql" maxOccurs="1">
+ *           &lt;complexType>
+ *             &lt;simpleContent>
+ *               &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string"> *                 
+ *               &lt;/extension>
+ *             &lt;/simpleContent>
+ *           &lt;/complexType>
+ *         &lt;/element>
  *         &lt;element name="data-element" maxOccurs="unbounded">
  *           &lt;complexType>
  *             &lt;simpleContent>
@@ -47,12 +57,15 @@ import javax.xml.bind.annotation.XmlValue;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "select", propOrder = {
-    "dataElement"
+    "sql", "dataElement"
 })
 public class Select {
 
     @XmlElement(name = "data-element", required = true)
     protected List<Select.DataElement> dataElement;
+    
+    @XmlElement(name = "sql", required = false)
+	private Sql sql; 
 
     /**
      * Gets the value of the dataElement property.
@@ -82,6 +95,21 @@ public class Select {
         }
         return this.dataElement;
     }
+    
+    /**
+  	 * @return the sql object representing sql text value
+  	 */
+  	public Sql getSql() {
+  		return sql;
+  	}
+
+
+  	/**
+  	 * @param sql text to be set
+  	 */
+  	public void setSql(Sql sql) {
+  		this.sql = sql;
+  	}
 
 
     /**

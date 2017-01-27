@@ -214,6 +214,15 @@ public class Scenario implements TimeTracker{
     Connection getConnection() {
         return connection;
     }
+    
+    /**
+     * Returns connection factory for creation of new database connection object.
+     * 
+     * @return connectionFactory
+     */
+    public ConnectionFactory getConnectionFactory(){
+    	return connectionFactory;
+    }
 
     /**
      * Returns number of all queries in this scenario.

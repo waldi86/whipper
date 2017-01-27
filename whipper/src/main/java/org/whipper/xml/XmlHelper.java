@@ -31,6 +31,7 @@ import org.whipper.ActualResultHolder;
 import org.whipper.ExpectedResultHolder;
 import org.whipper.Query;
 import org.whipper.QuerySet;
+import org.whipper.SQLHelper;
 import org.whipper.Scenario;
 import org.whipper.Suite;
 import org.whipper.exceptions.WhipperException;
@@ -206,7 +207,7 @@ public class XmlHelper {
                 ehr.setExceptionClass(qr.getException().getClazz());
                 ehr.setExceptionMessage(qr.getException().getMessage());
                 ehr.setExceptionRegex(qr.getException().getMessageRegex());
-            } else if(qr.getSelect() != null){
+            } else if(qr.getSelect() != null && qr.getTable() != null && qr.getSelect().getSql() == null){
                 Select s = qr.getSelect();
                 Table t = qr.getTable();
                 if(s.getDataElement().size() != t.getColumnCount()){
@@ -235,9 +236,22 @@ public class XmlHelper {
                 ehr.setColumnLabels(labels);
                 ehr.setColumnTypeNames(types);
                 ehr.setRows(rows);
-            } else if (qr.getNoResult() != null){
-                // OK, 'no-result' in the XML file
-            } else {
+            }  else if (qr.getTable() == null && qr.getSelect().getSql() != null) {
+				Select s = qr.getSelect();
+				List<String> labels = new ArrayList<>();
+				List<String> types = new ArrayList<>();
+				for (Select.DataElement de : s.getDataElement()) {
+					labels.add(de.getValue());
+					types.add(de.getType());
+				}
+				ehr.setColumnLabels(labels);
+				ehr.setColumnTypeNames(types);
+				try {
+					ehr.setRows(new SQLHelper().getResults(ehr, s.getSql().getValue()));
+				} catch (Exception ex) {
+					throw new WhipperException("Could not read comparision query results.", ex);
+				}
+			} else {
                 throw new WhipperException("Unknown result file format.");
             }
         } catch (JAXBException | WhipperException ex){
